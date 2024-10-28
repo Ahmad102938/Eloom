@@ -1,7 +1,7 @@
 "use client"
 import React from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { useQueryData } from "@/hooks/useQueryData";
@@ -10,6 +10,8 @@ import { WorkspaceProps } from "@/types";
 import Model from "../model";
 import { PlusCircle } from "lucide-react";
 import WorkspaceSearch, { Search } from "../search";
+import { MENU_ITEMS } from "@/constants";
+import { SidebarItems } from "./sidebar-items";
 
 type Props = {
     activeWorkspaceId: string
@@ -17,6 +19,7 @@ type Props = {
 
 const Sidebar = ({activeWorkspaceId}: Props) => {
     const router = useRouter()
+    const pathname = usePathname();
     const {data, isFetched} = useQueryData(["user-workspaces"], getUserworkspaces)
 
     const {data: workspace} = data as WorkspaceProps
@@ -27,6 +30,8 @@ const Sidebar = ({activeWorkspaceId}: Props) => {
     console.log(activeWorkspaceId);
 
     const currentWorspace = workspace?.workspace.find((s) => s.id === activeWorkspaceId)
+
+    const menuItems = MENU_ITEMS(activeWorkspaceId);
 
     return <div className="bg-[#111111] flex-none relative p-4 h-full w-[250px] flex flex-col gap-4 items-center overflow-hidden">
     <div className="bg-[#111111] p-4 flex gap-2 justify-center items-center mb-4 absolute top-0 left-0 right-0">
@@ -63,7 +68,13 @@ const Sidebar = ({activeWorkspaceId}: Props) => {
     </Model>)}
     <p className="w-full text-[#9D9D9D] font-bold mt-4">Menu</p>
     <nav className = "w-full">
-        <ul></ul>
+        <ul>{menuItems.map((item) => (
+            <SidebarItems
+                href={item.href}
+                icon={item.icon}
+                selected={pathname === item.href}
+            ></SidebarItems>
+        ))}</ul>
     </nav>
   </div>
 }
