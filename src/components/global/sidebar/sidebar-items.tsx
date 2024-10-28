@@ -17,7 +17,7 @@ export const SidebarItems = ({title, href, icon, selected, notifications}: Props
                 {icon}
                 <span className={cn("font-medium group-hover:text-[#9D9D9D] transition-all truncate w-32", selected ? 'text-[#9D9D9D]' : 'text-[#545454]')}>{title}</span>
             </div>
-            {notifications}
+            {}
         </Link>
     </li>
 }  
