@@ -1,5 +1,8 @@
+import VideoRecorderIcon from "@/components/icons/video-recorder";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { UserButton } from "@clerk/nextjs";
+import { Search, UploadIcon} from "lucide-react";
 import React from "react";
 
 type Props = {}
@@ -16,6 +19,17 @@ export const InfoBar = ({}: Props) => {
           className="bg-transparent border-none !placeholder-neutral-500"
           placeholder="Search for people, projects, tags & folders"
         />
+      </div>
+      <div className="flex item-center gap-4">
+        <Button className="bg-[#9D9D9D] flex items-center gap-2">
+          <UploadIcon size={20}/>{' '}
+          <span className="flex items-center gap-2">Upload</span>
+        </Button>
+        <Button className= "bg-[#9D9D9D] flex items-center gap-4">
+          <VideoRecorderIcon />
+          <span className = "flex item-center gap-2">Record</span>
+        </Button>
+        <UserButton/>
       </div>
         </header>
     )
