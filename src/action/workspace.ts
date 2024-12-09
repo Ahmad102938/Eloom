@@ -165,4 +165,100 @@ export const getUserNotifications = async () => {
         return {status: 400, data: []}
     }
 }
+
+export const createWorkspace = async (name: string) => {
+    try {
+        const user = await currentUser();
+        if(!user) return {status: 404}
+        const authorized = await client.user.findUnique({
+            where: {
+                clerkid: user.id,
+            },
+            select: {
+                subscription: {
+                    select: {
+                        plan: true
+                    }
+                }
+            }
+        })
+        if(authorized?.subscription?.plan==='PRO') {
+            const workspace = await client.user.update({
+                where: {
+                    clerkid: user.id,
+                },
+                data: {
+                    workspace: {
+                        create: {
+                            name, 
+                            type: 'PUBLIC',
+                        }
+                    }
+                }
+            })
+            if(workspace) return {statue: 201, data: "workspace created"}
+        }
+        return {status: 401, data: 'you are not authorized to create a workspace'}
+    } catch (error) {
+        return {status: 400, }
+    }
+}
+
+export const renameFolders = async (folderId: string, name: string) => {
+    try {
+        const folder = await client.folder.update({
+            where: {
+                id: folderId
+            },
+            data: {
+                name,
+            }
+        })
+        if(folder) return {status: 200, data: "Folder Renamed"}
+        return {status: 400, data: "Folder Does Not Exist"}
+    } catch(error) {
+        return {status: 500, data:"Something went Wrong!!"}
+    }
+}
+
+export const createFolder = async (workspaceId: string) => {
+    try {
+        const isNewFolder = await client.workSpace.update({
+            where: {
+                id: workspaceId
+            },
+            data: {
+                folders: {
+                    create: {name:"Untitlted"}
+                }
+            }
+        })
+        if(isNewFolder) return {status: 200, message: 'New Folder Created'}
+        return {status: 400, message: 'Could not Create Folder'}
+    } catch(error) {
+        return {status: 500, message: 'Something Went Wrong'}
+    }
+}
+
+export const getFolderInfo = async (folderId: string) => {
+    try {
+        const folder = await client.folder.findUnique({
+            where: {
+                id: folderId,
+            },
+            select: {
+                name: true,
+                _count: {
+                    select: {
+                        videos: true
+                    }
+                }
+            }
+        })
+        if(folder) return {status: 200, data: folder}
+        return {status: 400, data: null}
+    } catch(error) {
+        return {status: 500, data: null}
+    }
+}
   
